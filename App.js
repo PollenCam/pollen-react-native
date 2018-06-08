@@ -6,21 +6,18 @@ import Dashboard from './containers/Dashboard';
 import Profile from './containers/Profile';
 import Stream from './containers/Stream';
 
-import ScrollViewContainer from './components/ScrollViewContainer';
+import Drawer from './components/drawer.js';
 
 export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <ScrollViewContainer
-          routes={[
-            { component: Dashboard },
-            { component: Camera },
-            { component: Stream },
-          ]}
-          initialIndex={1}
-        />
-      </View>
+      <Drawer>
+        <Camera/>
+        <Dashboard/>
+        <Stream/>
+      </Drawer>
+    </View>
     );
   }
 }

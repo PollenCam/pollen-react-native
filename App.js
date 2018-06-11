@@ -6,17 +6,20 @@ import Dashboard from './containers/Dashboard';
 import Profile from './containers/Profile';
 import Stream from './containers/Stream';
 
-import Drawer from './components/drawer.js';
+import PollenScrollView from './containers/PollenScrollView'
 
 export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-      <Drawer>
-        <Camera/>
-        <Dashboard/>
-        <Stream/>
-      </Drawer>
+      <PollenScrollView
+        routes={[
+          { component: Dashboard },
+          { component: Camera },
+          { component: Stream },
+        ]}
+        initialIndex={1}
+      />
     </View>
     );
   }

@@ -2,9 +2,12 @@ import React, { Component } from 'react';
 import { ScrollView, Dimensions, View, StyleSheet, Platform, InteractionManager, PanResponder } from 'react-native';
 import PropTypes from 'prop-types';
 
-const window = Dimensions.get('window');
+import Camera from './Camera';
+import Dashboard from './Dashboard';
+import Profile from './Profile';
+import Stream from './Stream';
 
-// const _lastPinchDistance = -1;
+const window = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -12,9 +15,6 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flexDirection: 'row',
-  },
-  scrollViewVertical: {
-    flexDirection: 'column',
   },
   item: {
     flex: 1,
@@ -28,21 +28,12 @@ const styles = StyleSheet.create({
 });
 
 class PollenScrollView extends Component {
-  static propTypes = {
-    routes: PropTypes.array,
-    horizontal: PropTypes.bool,
-    initialIndex: PropTypes.number,
-  }
-
-  static defaultProps = {
-    routes: [],
-    horizontal: true,
-    initialIndex: 0,
-  }
 
   constructor(props) {
     super(props);
     this._scrollView = null;
+
+    this._initialIndex = 1;
 
     this.state = {
       lastPinchDistance: -1,
@@ -51,56 +42,44 @@ class PollenScrollView extends Component {
   }
 
   componentDidMount() {
-    if (this.props.horizontal) {
-      const offset = window.width * this.props.initialIndex;
-      {/* This is really janky, but it seems to be necessary for Android */}
-      if (Platform.OS === 'android') {
-        InteractionManager.runAfterInteractions(() => {
-          setTimeout(() => {
-            this._scrollView.scrollTo({ x: offset, animated: false });
-          }, 10)
-        })
-      } else {
-        this._scrollView.scrollTo({ x: offset, animated: false });
-      }
+    const offset = window.width * this._initialIndex;
+    {/* This is really janky, but it seems to be necessary for Android */}
+    if (Platform.OS === 'android') {
+      InteractionManager.runAfterInteractions(() => {
+        setTimeout(() => {
+          this._scrollView.scrollTo({ x: offset, animated: false });
+        }, 10)
+      })
     } else {
-      const offset = window.height * this.props.initialIndex;
-      this._scrollView.scrollTo({ y: offset, animated: false });
+      this._scrollView.scrollTo({ x: offset, animated: false });
     }
   }
 
-  renderScreens() {
-    const { horizontal, routes } = this.props;
-    const itemStyle = horizontal ? styles.item : styles.verticalItem;
-
-    return this.props.routes.map((route, index) => {
-      return (
-        <View key={index} style={itemStyle}>
-          <route.component zoomIn={(zoomIn) => { this.childZoomIn = zoomIn; }} zoomOut={(zoomOut) => { this.childZoomOut = zoomOut; }}/>
-        </View>
-      );
-    });
-  }
-
   render() {
-    const { horizontal } = this.props;
-    const scrollViewStyle = horizontal ? styles.scrollView : styles.scrollViewVertical;
-
     return (
       <View style={styles.container} {...this._panResponder.panHandlers}>
         <ScrollView
           ref={(c) => this._scrollView = c}
-          horizontal={horizontal}
+          horizontal={true}
           pagingEnabled
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
-          style={scrollViewStyle}
+          style={styles.scrollView}
           scrollEventThrottle={3}
           bounces={false}
           directionalLockEnabled={true}
-          scrollEnabled={this.state.scrollEnabled}
-        >
-          {this.renderScreens()}
+          scrollEnabled={this.state.scrollEnabled}>
+          <View key={0} style={styles.item}>
+            <Dashboard />
+          </View>
+          <View key={1} style={styles.item}>
+            <Camera
+              zoomIn={(zoomIn) => { this.childZoomIn = zoomIn; }}
+              zoomOut={(zoomOut) => { this.childZoomOut = zoomOut; }}/>
+          </View>
+          <View key={2} style={styles.item}>
+            <Stream />
+          </View>
         </ScrollView>
       </View>
     );
@@ -145,7 +124,7 @@ class PollenScrollView extends Component {
   }
 
   _panResponder = PanResponder.create({
-    onStartShouldSetPanResponder: () => true,
+    // onStartShouldSetPanResponder: () => true,
     onMoveShouldSetPanResponder: () => true,
     onPanResponderGrant: (evt, gestureState) => {
       const touches = evt.nativeEvent.touches;

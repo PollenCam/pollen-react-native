@@ -41,25 +41,21 @@ export default class CameraScreen extends React.Component {
   }
 
   toggleFacing () {
-    console.log('toggleFacing');
-
     this.setState({
       type: this.state.type === 'back' ? 'front' : 'back',
     })
   }
 
+// TODO need to fix attempt to zoomOut beyond max bug
   zoomOut() {
     this.setState({ zoom: this.state.zoom - 0.1 < 0 ? 0 : this.state.zoom - 0.1 });
-    console.log('Camera zoomOut, new zoom = ' + this.state.zoom);
   }
 
   zoomIn() {
     this.setState({ zoom: this.state.zoom + 0.1 > 1 ? 1 : this.state.zoom + 0.1 });
-    console.log('Camera zoomIn, new zoom = ' + this.state.zoom);
   }
 
   async takePicture () {
-    console.log('takePicture');
     if (this.camera) {
       const picture = await this.camera.takePictureAsync({ quality: 1, base64: true, exif: true })
 

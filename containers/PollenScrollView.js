@@ -59,23 +59,23 @@ class PollenScrollView extends Component {
     return (
       <View style={styles.container} {...this._panResponder.panHandlers}>
         <ScrollView
-          ref={(c) => this._scrollView = c}
-          horizontal={true}
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-          style={styles.scrollView}
-          scrollEventThrottle={3}
-          bounces={false}
-          directionalLockEnabled={true}
-          scrollEnabled={this.state.scrollEnabled}>
+        ref={(c) => this._scrollView = c}
+        horizontal={true}
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        style={styles.scrollView}
+        scrollEventThrottle={3}
+        bounces={false}
+        directionalLockEnabled={true}
+        scrollEnabled={this.state.scrollEnabled}>
           <View key={0} style={styles.item}>
             <Dashboard />
           </View>
           <View key={1} style={styles.item}>
             <Camera
-              zoomIn={(zoomIn) => { this.childZoomIn = zoomIn; }}
-              zoomOut={(zoomOut) => { this.childZoomOut = zoomOut; }}/>
+            zoomIn={(zoomIn) => { this.childZoomIn = zoomIn; }}
+            zoomOut={(zoomOut) => { this.childZoomOut = zoomOut; }}/>
           </View>
           <View key={2} style={styles.item}>
             <Stream />
@@ -85,22 +85,12 @@ class PollenScrollView extends Component {
     );
   }
 
-  // _childToggleFacing() {
-  //   this.childToggleFacing();
-  // }
-  //
-  // _childTakePicture() {
-  //   this.childTakePicture();
-  // }
-
   _calculateDistance(x1, y1, x2, y2) {
     const dx = x1 - x2;
     const dy = y1 - y2;
     return Math.sqrt(dx * dx + dy * dy);
   }
   _processPinch(x1, y1, x2, y2) {
-    console.log('_processPinch');
-
     const currentPinchDistance = this._calculateDistance(x1, y1, x2, y2);
 
     if (this.state.lastPinchDistance === -1) {
@@ -109,21 +99,12 @@ class PollenScrollView extends Component {
       });
     }
 
-    // pinchThreshold = this._lastPinchDistance * 0.05;
-    pinchThreshold = 0;
-
-
-    console.log('_processPinch currentPinchDistance = ' + currentPinchDistance);
-    console.log('_processPinch lastPinchDistance = ' + this.state.lastPinchDistance);
-
-    if (currentPinchDistance < (this.state.lastPinchDistance - pinchThreshold)) {
-      console.log('pinch in');
+    if (currentPinchDistance < this.state.lastPinchDistance) {
       this.childZoomOut();
       this.setState({
         lastPinchDistance: currentPinchDistance,
       });
-    } else if (currentPinchDistance > (this.state.lastPinchDistance + pinchThreshold)) {
-      console.log('pinch out');
+    } else if (currentPinchDistance > this.state.lastPinchDistance) {
       this.childZoomIn();
       this.setState({
         lastPinchDistance: currentPinchDistance,
@@ -132,55 +113,31 @@ class PollenScrollView extends Component {
   }
 
   _panResponder = PanResponder.create({
-    onStartShouldSetPanResponder: (evt, gestureState) => {
-      console.log('onStartShouldSetPanResponder, touches = ' + evt.nativeEvent.touches.length);
-      if (evt.nativeEvent.touches.length === 1) {
-        console.log('onStartShouldSetPanResponder, 1 touch, returning false');
-        return false;
-      }
-    },
+    onStartShouldSetPanResponder: () => {},
     onMoveShouldSetPanResponder: (evt, gestureState) => {
-      console.log('onMoveShouldSetPanResponder, touches = ' + evt.nativeEvent.touches.length);
       if (evt.nativeEvent.touches.length === 1) {
-        console.log('onMoveShouldSetPanResponder, 1 touch, returning false');
         return false;
       } else {
         return true;
       }
     },
-    onPanResponderGrant: (evt, gestureState) => {
-      console.log('onPanResponderGrant, touches = ' + evt.nativeEvent.touches.length);
-      if (evt.nativeEvent.touches.length === 1) {
-        // this._setScrollState(SCROLL_STATE.dragging)
-        console.log('onPanResponderGrant, 1 touch, returning false');// TODO maybe not needed
-        return false;
-      } else if (evt.nativeEvent.touches.length === 2) {
-        // this._setScrollState(SCROLL_STATE.pinching)
+    onPanResponderGrant: (evt, gestureState) => {},
+    onPanResponderMove: (evt, gestureState) => {
+      if (evt.nativeEvent.touches.length === 2) {
+        this.setState({ scrollEnabled: false });
+        const [touch1, touch2] = evt.nativeEvent.touches;
+        this._processPinch(
+          touch1.locationX,
+          touch1.locationY,
+          touch2.locationX,
+          touch2.locationY
+        );
       }
     },
-    onPanResponderMove: (evt, gestureState) => {
-      console.log('onPanResponderMove, touches = ' + evt.nativeEvent.touches.length);
-      // if (this._scrollState === SCROLL_STATE.pinching) {
-        if (evt.nativeEvent.touches.length === 1) {
-          // this._setScrollState(SCROLL_STATE.dragging)
-          console.log('onPanResponderMove, 1 touch, returning false'); // TODO maybe not needed
-          return false;
-        } else if (evt.nativeEvent.touches.length === 2) {
-          this.setState({ scrollEnabled: false });
-          const [touch1, touch2] = evt.nativeEvent.touches;
-          this._processPinch(
-            touch1.locationX,
-            touch1.locationY,
-            touch2.locationX,
-            touch2.locationY
-          );
-        }
-      },
     onPanResponderRelease: () => {
-      console.log('onPanResponderRelease')
       this.setState({ scrollEnabled: true });
     },
-    onPanResponderTerminate: () => console.log('onPanResponderTerminate'),
+    onPanResponderTerminate: () => {},
     onPanResponderTerminationRequest: (evt, gestureState) => true
   })
 }

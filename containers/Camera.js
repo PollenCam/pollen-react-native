@@ -29,8 +29,8 @@ export default class CameraScreen extends React.Component {
   }
 
   componentDidMount() {
-    this.props.zoomIn(this.zoomIn.bind(this));
-    this.props.zoomOut(this.zoomOut.bind(this));
+    this.props.pinchOut(this.zoomIn.bind(this));
+    this.props.pinchIn(this.zoomOut.bind(this));
   }
 
   async requestPermissions () {

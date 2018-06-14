@@ -74,8 +74,8 @@ class PollenScrollView extends Component {
           </View>
           <View key={1} style={styles.item}>
             <Camera
-            zoomIn={(zoomIn) => { this.childZoomIn = zoomIn; }}
-            zoomOut={(zoomOut) => { this.childZoomOut = zoomOut; }}/>
+            pinchOut={(pinchOut) => { this.childPinchOut = pinchOut; }}
+            pinchIn={(pinchIn) => { this.childPinchIn = pinchIn; }}/>
           </View>
           <View key={2} style={styles.item}>
             <Stream />
@@ -100,12 +100,12 @@ class PollenScrollView extends Component {
     }
 
     if (currentPinchDistance < this.state.lastPinchDistance) {
-      this.childZoomOut();
+      this.childPinchIn();
       this.setState({
         lastPinchDistance: currentPinchDistance,
       });
     } else if (currentPinchDistance > this.state.lastPinchDistance) {
-      this.childZoomIn();
+      this.childPinchOut();
       this.setState({
         lastPinchDistance: currentPinchDistance,
       });

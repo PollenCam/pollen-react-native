@@ -85,6 +85,14 @@ class PollenScrollView extends Component {
     );
   }
 
+  // _childToggleFacing() {
+  //   this.childToggleFacing();
+  // }
+  //
+  // _childTakePicture() {
+  //   this.childTakePicture();
+  // }
+
   _calculateDistance(x1, y1, x2, y2) {
     const dx = x1 - x2;
     const dy = y1 - y2;
@@ -124,26 +132,42 @@ class PollenScrollView extends Component {
   }
 
   _panResponder = PanResponder.create({
-    // onStartShouldSetPanResponder: () => true,
-    onMoveShouldSetPanResponder: () => true,
+    onStartShouldSetPanResponder: (evt, gestureState) => {
+      console.log('onStartShouldSetPanResponder, touches = ' + evt.nativeEvent.touches.length);
+      if (evt.nativeEvent.touches.length === 1) {
+        console.log('onStartShouldSetPanResponder, 1 touch, returning false');
+        return false;
+      }
+    },
+    onMoveShouldSetPanResponder: (evt, gestureState) => {
+      console.log('onMoveShouldSetPanResponder, touches = ' + evt.nativeEvent.touches.length);
+      if (evt.nativeEvent.touches.length === 1) {
+        console.log('onMoveShouldSetPanResponder, 1 touch, returning false');
+        return false;
+      } else {
+        return true;
+      }
+    },
     onPanResponderGrant: (evt, gestureState) => {
-      const touches = evt.nativeEvent.touches;
-      const length = touches.length;
-      console.log('onPanResponderGrant, touches = ' + length);
-      if (length === 1) {
+      console.log('onPanResponderGrant, touches = ' + evt.nativeEvent.touches.length);
+      if (evt.nativeEvent.touches.length === 1) {
         // this._setScrollState(SCROLL_STATE.dragging)
-      } else if (length === 2) {
+        console.log('onPanResponderGrant, 1 touch, returning false');// TODO maybe not needed
+        return false;
+      } else if (evt.nativeEvent.touches.length === 2) {
         // this._setScrollState(SCROLL_STATE.pinching)
       }
     },
     onPanResponderMove: (evt, gestureState) => {
-      const touches = evt.nativeEvent.touches;
-      const length = touches.length;
-      console.log('onPanResponderMove, touches = ' + length);
+      console.log('onPanResponderMove, touches = ' + evt.nativeEvent.touches.length);
       // if (this._scrollState === SCROLL_STATE.pinching) {
-        if (length === 2) {
+        if (evt.nativeEvent.touches.length === 1) {
+          // this._setScrollState(SCROLL_STATE.dragging)
+          console.log('onPanResponderMove, 1 touch, returning false'); // TODO maybe not needed
+          return false;
+        } else if (evt.nativeEvent.touches.length === 2) {
           this.setState({ scrollEnabled: false });
-          const [touch1, touch2] = touches;
+          const [touch1, touch2] = evt.nativeEvent.touches;
           this._processPinch(
             touch1.locationX,
             touch1.locationY,

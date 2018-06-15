@@ -35,7 +35,7 @@ export default class CameraScreen extends React.Component {
     depth: 0,
     type: 'back',
     whiteBalance: 'auto',
-    ratio: '16:9',
+    ratio: undefined,
     ratios: [],
     photoId: 1,
     photos: [],
@@ -46,6 +46,7 @@ export default class CameraScreen extends React.Component {
     super(props);
     this.toggleFacing = this.toggleFacing.bind(this);
     this.toggleFlash = this.toggleFlash.bind(this);
+    this.getCameraRatios = this.getCameraRatios.bind(this);
   }
 
   async componentWillMount () {
@@ -72,6 +73,14 @@ export default class CameraScreen extends React.Component {
     const { status: rollPermissions } = await Permissions.askAsync(Permissions.CAMERA_ROLL)
 
     this.setState({ permissionsGranted: cameraPermissions == 'granted' })
+  }
+
+  async getCameraRatios() {
+    const ratios = await this.camera.getSupportedRatiosAsync();
+    const lastRatio = ratios[ratios.length-1];
+    this.setState({
+      ratio: lastRatio,
+    });
   }
 
   toggleFacing () {
@@ -138,7 +147,8 @@ export default class CameraScreen extends React.Component {
         zoom={this.state.zoom}
         whiteBalance={this.state.whiteBalance}
         ratio={this.state.ratio}
-        focusDepth={this.state.depth}>
+        focusDepth={this.state.depth}
+        onCameraReady={this.getCameraRatios}>
         <View style={styles.controls}>
           <TouchableOpacity style={styles.iconButton} onPress={this.toggleFacing.bind(this)}>
             {this.renderToggleCameraIcon()}

@@ -8,7 +8,7 @@ import {
 const { Path } = Svg;
 
 import React from 'react'
-import { StyleSheet, Text, View, TouchableOpacity, Vibration, CameraRoll, Icon } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, Vibration, CameraRoll, Icon, AsyncStorage } from 'react-native'
 // import isIPhoneX from 'react-native-is-iphonex'
 
 import ToggleCameraBackIcon from '../images/ToggleCameraBackIcon'
@@ -17,6 +17,9 @@ import CameraCircleIcon from '../images/CameraCircleIcon'
 import FlashAutoIcon from '../images/FlashAutoIcon'
 import FlashOnIcon from '../images/FlashOnIcon'
 import FlashOffIcon from '../images/FlashOffIcon'
+
+const CAMERA_FACING_KEY = 'CAMERA_FACING_KEY'
+const CAMERA_FLASH_KEY = 'CAMERA_FLASH_KEY'
 
 const flashModeOrder = {
   off: 'on',
@@ -39,13 +42,29 @@ export default class CameraScreen extends React.Component {
     permissionsGranted: false
   }
 
+  constructor(props) {
+    super(props);
+    this.toggleFacing = this.toggleFacing.bind(this);
+    this.toggleFlash = this.toggleFlash.bind(this);
+  }
+
   async componentWillMount () {
-    await this.requestPermissions()
+    await this.requestPermissions();
   }
 
   componentDidMount() {
     this.props.pinchOut(this.zoomIn.bind(this));
     this.props.pinchIn(this.zoomOut.bind(this));
+
+
+    AsyncStorage.getItem(CAMERA_FACING_KEY).then((value) => {
+      value == null ? 'back' : value;
+      this.setState({type: value});
+    });
+    AsyncStorage.getItem(CAMERA_FLASH_KEY).then((value) => {
+      value == null ? 'off' : value;
+      this.setState({flash: value});
+    });
   }
 
   async requestPermissions () {
@@ -56,15 +75,27 @@ export default class CameraScreen extends React.Component {
   }
 
   toggleFacing () {
-    this.setState({
-      type: this.state.type === 'back' ? 'front' : 'back',
-    })
+    const newValue = this.state.type === 'back' ? 'front' : 'back';
+
+    this.setState({ type: newValue }, async function () {
+      try {
+        await AsyncStorage.setItem(CAMERA_FACING_KEY, newValue);
+      } catch (error) {
+        console.error('Unable to save Facing setting.');
+      }
+    });
   }
 
   toggleFlash () {
-    this.setState({
-      flash: flashModeOrder[this.state.flash]
-    })
+    const newValue = flashModeOrder[this.state.flash];
+
+    this.setState({ flash: newValue }, async function () {
+      try {
+        await AsyncStorage.setItem(CAMERA_FLASH_KEY, newValue)
+      } catch (error) {
+        console.error('Unable to save Flash setting.');
+      }
+    });
   }
 
 // TODO need to fix attempt to zoomOut beyond max bug

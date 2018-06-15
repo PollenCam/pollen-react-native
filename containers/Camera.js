@@ -2,12 +2,27 @@ import {
   Constants,
   Camera,
   FileSystem,
-  Permissions
+  Permissions,
+  Svg,
 } from 'expo'
+const { Path } = Svg;
 
 import React from 'react'
-import { StyleSheet, Text, View, TouchableOpacity, Vibration, CameraRoll } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, Vibration, CameraRoll, Icon } from 'react-native'
 // import isIPhoneX from 'react-native-is-iphonex'
+
+import ToggleCameraBackIcon from '../images/ToggleCameraBackIcon'
+import ToggleCameraFrontIcon from '../images/ToggleCameraFrontIcon'
+import CameraCircleIcon from '../images/CameraCircleIcon'
+import FlashAutoIcon from '../images/FlashAutoIcon'
+import FlashOnIcon from '../images/FlashOnIcon'
+import FlashOffIcon from '../images/FlashOffIcon'
+
+const flashModeOrder = {
+  off: 'on',
+  on: 'auto',
+  auto: 'off',
+};
 
 export default class CameraScreen extends React.Component {
   state = {
@@ -46,6 +61,12 @@ export default class CameraScreen extends React.Component {
     })
   }
 
+  toggleFlash () {
+    this.setState({
+      flash: flashModeOrder[this.state.flash]
+    })
+  }
+
 // TODO need to fix attempt to zoomOut beyond max bug
   zoomOut() {
     this.setState({ zoom: this.state.zoom - 0.1 < 0 ? 0 : this.state.zoom - 0.1 });
@@ -79,9 +100,7 @@ export default class CameraScreen extends React.Component {
     return (
       <Camera
         ref={ref => this.camera = ref}
-        style={{
-          flex: 1,
-        }}
+        style={styles.camera}
         type={this.state.type}
         flashMode={this.state.flash}
         autoFocus={this.state.autoFocus}
@@ -89,26 +108,47 @@ export default class CameraScreen extends React.Component {
         whiteBalance={this.state.whiteBalance}
         ratio={this.state.ratio}
         focusDepth={this.state.depth}>
-        <View
-          style={{
-            flex: 1,
-            // paddingBottom: isIPhoneX ? 20 : 0,
-            backgroundColor: 'transparent',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end'
-          }}>
-          <TouchableOpacity style={styles.flipButton} onPress={this.toggleFacing.bind(this)}>
-            <Text style={styles.flipText}> FLIP </Text>
+        <View style={styles.controls}>
+          <TouchableOpacity style={styles.iconButton} onPress={this.toggleFacing.bind(this)}>
+            {this.renderToggleCameraIcon()}
           </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.flipButton, styles.picButton]}
-            onPress={this.takePicture.bind(this)}>
-            <Text style={styles.flipText}> SNAP </Text>
+          <TouchableOpacity style={[styles.iconButton, styles.cameraCircleButton]} onPress={this.takePicture.bind(this)}>
+            <CameraCircleIcon/>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconButton} onPress={this.toggleFlash.bind(this)}>
+            {this.renderFlashIcon()}
           </TouchableOpacity>
         </View>
       </Camera>
     )
+  }
+
+  renderToggleCameraIcon() {
+    if (this.state.type === 'front') {
+      return (
+        <ToggleCameraFrontIcon/>
+      )
+    } else {
+      return (
+        <ToggleCameraBackIcon/>
+      )
+    }
+  }
+
+  renderFlashIcon() {
+    if (this.state.flash === 'auto') {
+      return (
+        <FlashAutoIcon/>
+      )
+    } else if (this.state.flash === 'on') {
+      return (
+        <FlashOnIcon/>
+      )
+    } else {
+      return (
+        <FlashOffIcon/>
+      )
+    }
   }
 
   render() {
@@ -124,24 +164,27 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000'
   },
-  flipButton: {
-    flex: 0.3,
-    height: 40,
-    marginHorizontal: 2,
-    marginBottom: 10,
-    marginTop: 20,
-    borderRadius: 8,
-    borderColor: 'white',
-    borderWidth: 1,
-    padding: 5,
+  camera: {
+    flex: 1,
+  },
+  controls: {
+    flex: 1,
+    // paddingBottom: isIPhoneX ? 20 : 0,
+    backgroundColor: '#00000040',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end'
+  },
+  iconButton: {
+    height: 48,
+    width: 48,
     alignItems: 'center',
     justifyContent: 'center'
   },
-  flipText: {
-    color: 'white',
-    fontSize: 15
-  },
-  picButton: {
-    backgroundColor: 'darkseagreen'
+  cameraCircleButton: {
+    height: 72,
+    width: 72,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 })

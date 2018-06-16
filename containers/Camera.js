@@ -221,8 +221,10 @@ const styles = StyleSheet.create({
     // paddingBottom: isIPhoneX ? 20 : 0,
     backgroundColor: '#00000040',
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingTop: 12,
+    paddingBottom: 24,
   },
   iconButton: {
     height: 48,

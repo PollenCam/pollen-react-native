@@ -149,16 +149,18 @@ export default class CameraScreen extends React.Component {
         ratio={this.state.ratio}
         focusDepth={this.state.depth}
         onCameraReady={this.getCameraRatios}>
-        <View style={styles.controls}>
-          <TouchableOpacity style={styles.iconButton} onPress={this.toggleFacing.bind(this)}>
-            {this.renderToggleCameraIcon()}
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.iconButton, styles.cameraCircleButton]} onPress={this.takePicture.bind(this)}>
-            <CameraCircleIcon/>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton} onPress={this.toggleFlash.bind(this)}>
-            {this.renderFlashIcon()}
-          </TouchableOpacity>
+        <View style={styles.controlsContainer}>
+          <View style={styles.controls}>
+            <TouchableOpacity style={styles.iconButton} onPress={this.toggleFacing.bind(this)}>
+              {this.renderToggleCameraIcon()}
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.iconButton, styles.cameraCircleButton]} onPress={this.takePicture.bind(this)}>
+              <CameraCircleIcon/>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton} onPress={this.toggleFlash.bind(this)}>
+              {this.renderFlashIcon()}
+            </TouchableOpacity>
+          </View>
         </View>
       </Camera>
     )
@@ -208,13 +210,19 @@ const styles = StyleSheet.create({
   camera: {
     flex: 1,
   },
+  controlsContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    backgroundColor: 'transparent',
+  },
   controls: {
     flex: 1,
     // paddingBottom: isIPhoneX ? 20 : 0,
     backgroundColor: '#00000040',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
   },
   iconButton: {
     height: 48,

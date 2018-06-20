@@ -133,6 +133,10 @@ class PollenScrollView extends Component {
           touch2.locationY
         );
       }
+      {/* this is a hack to display an error, from which you can force reload because hot reload sucks :( */}
+if (gestureState.numberActiveTouches === 3) {
+  HACK_TO_ALLOW_FORCE_RELOAD_HAHAHAHAHA_____FOR_DEBUG_ONLY
+}
     },
     onPanResponderRelease: () => {
       this.setState({ scrollEnabled: true });

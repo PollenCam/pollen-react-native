@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import PollenScrollView from './containers/PollenScrollView'
+import PollenScrollView from './components/PollenScrollView'
 
 export default class App extends React.Component {
   render() {

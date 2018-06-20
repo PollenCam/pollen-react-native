@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, FlatList } from 'react-native';
 
-import {getStream} from '../api/FetchStream';
+import {getGallery} from '../api/FetchGallery';
 
 
-class Stream extends React.Component {
+class Gallery extends React.Component {
 
   constructor() {
     super();
@@ -17,7 +17,7 @@ class Stream extends React.Component {
   }
 
   componentDidMount() {
-    getStream()
+    getGallery()
     .then((res) => {
       if(res === undefined) {
         this.setState({
@@ -100,4 +100,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default Stream;
+export default Gallery;

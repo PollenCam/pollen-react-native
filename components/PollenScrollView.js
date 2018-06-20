@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import Camera from './Camera';
 import Dashboard from './Dashboard';
 import Profile from './Profile';
-import Stream from './Stream';
+import Gallery from './Gallery';
 
 const window = Dimensions.get('window');
 
@@ -78,7 +78,7 @@ class PollenScrollView extends Component {
             pinchIn={(pinchIn) => { this.childPinchIn = pinchIn; }}/>
           </View>
           <View key={2} style={styles.item}>
-            <Stream />
+            <Gallery />
           </View>
         </ScrollView>
       </View>

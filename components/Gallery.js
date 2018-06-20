@@ -63,7 +63,7 @@ class Gallery extends React.Component {
     // );
   }
 
-  _keyExtractor = (item, index) => index;
+  _keyExtractor = (item, index) => '' + index;
 
   _renderItem = ({item}) => (
         <View style={styles.item}>

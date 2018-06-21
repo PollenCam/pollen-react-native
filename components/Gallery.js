@@ -1,8 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, FlatList } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, FlatList, Dimensions, Image } from 'react-native';
+import ScalableImage from 'react-native-scalable-image';
+import Mask from "react-native-mask";
 
 import {getGallery} from '../api/FetchGallery';
 
+const _padding = 12;
+const _screenWidth = Dimensions.get('window').width - (_padding*2);
 
 class Gallery extends React.Component {
 
@@ -36,7 +40,7 @@ class Gallery extends React.Component {
     if (this.state.data && this.state.data.length > 0) {
       // console.log("data = " + data)
       return (
-        <FlatList
+        <FlatList style={styles.list}
           data={this.state.data}
           renderItem={this._renderItem}
           keyExtractor={this._keyExtractor}
@@ -47,37 +51,35 @@ class Gallery extends React.Component {
         <Text>Error Data not loaded</Text>
       )
     }
-
-    // return this.state.data.map((dataItem, index) => {
-    //   return (
-    //     <View key = {index} style={styles.item}>
-    //       <Text>{dataItem.name}</Text>
-    //       <Image
-    //         style={{width: 500, height: 500}}
-    //         source={{uri: dataItem.imageUrl}}
-    //       />
-    //     </View>
-    //   )
-    // }
-    //
-    // );
   }
 
   _keyExtractor = (item, index) => '' + index;
 
   _renderItem = ({item}) => (
-        <View style={styles.item}>
-          <Text>{item.name}</Text>
-          <Image
-            style={{width: 500, height: 500}}
-            source={{uri: item.imageUrl}}
-          />
+        <View style={styles.item}
+            source={{uri: item.imageUrl}}>
+          <View style={styles.itemInfo}>
+            <View style={styles.itemInfoAvatar}>
+              <Mask shape={'circle'}>
+                <Image style={styles.itemInfoAvatar}
+                  source={{uri: item.avatar}}/>
+              </Mask>
+            </View>
+            <Text style={styles.itemInfoName}>{item.name}</Text>
+          </View>
+          <ScalableImage style={styles.image}
+            width={_screenWidth}
+            source={{uri: item.imageUrl}} />
         </View>
   );
 
   render() {
     return (
       <View style={styles.container}>
+        <View style={styles.toolbarPadding} />
+        <View style={styles.toolbar}>
+          <Text style={styles.toolbarText}>Event Name Here</Text>
+        </View>
         { this.renderItems() }
       </View>
     );
@@ -87,17 +89,54 @@ class Gallery extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#FFF',
+  },
+  toolbarPadding: {
+    height: 72,
+  },
+  toolbar: {
+    width: '100%',
+    height: 72,
+    position: 'absolute',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#F4D35E',
+    backgroundColor: "#fff",
+    shadowOffset:{ width: 0, height: 2, },
+    shadowColor: 'black',
+    shadowOpacity: 0.5,
+    elevation: 2,
   },
-  scrollView: {
-    flexDirection: 'row',
+  toolbarText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  list: {
+    flex: 1,
   },
   item: {
     flex: 1,
+    padding: _padding
+  },
+  itemInfo: {
+    flex: 1,
+    flexDirection: 'row',
+    paddingTop: _padding,
+    paddingBottom: _padding,
+    alignItems: 'center',
+  },
+  itemInfoAvatar: {
+    width: 36,
+    height: 36
+  },
+  itemInfoName: {
+    paddingLeft: 8,
+  },
+  image: {
+    flex: 1,
+    borderRadius: 12,
+    paddingTop: _padding,
+    paddingBottom: _padding,
   },
 });
-
 
 export default Gallery;

@@ -33,7 +33,7 @@ class PollenScrollView extends Component {
     super(props);
     this._scrollView = null;
 
-    this._initialIndex = 1;
+    this._initialIndex = 2;
 
     this.state = {
       lastPinchDistance: -1,

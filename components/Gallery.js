@@ -1,12 +1,16 @@
 import React from 'react';
 import { View, Text, StyleSheet, ImageBackground, FlatList, Dimensions, Image } from 'react-native';
 import ScalableImage from 'react-native-scalable-image';
-import Mask from "react-native-mask";
+import Mask from 'react-native-mask';
+// import { md5 } from 'md5';
+import SmartImage from './SmartImage';
 
 import {getGallery} from '../api/FetchGallery';
 
 const _padding = 12;
 const _screenWidth = Dimensions.get('window').width - (_padding*2);
+
+var md5 = require('md5');
 
 class Gallery extends React.Component {
 
@@ -61,8 +65,10 @@ class Gallery extends React.Component {
           <View style={styles.itemInfo}>
             <View style={styles.itemInfoAvatar}>
               <Mask shape={'circle'}>
-                <Image style={styles.itemInfoAvatar}
-                  source={{uri: item.avatar}}/>
+                <SmartImage style={styles.itemInfoAvatar}
+                  source={{
+                    filename:`${item.name} ${item.createdAt}`,
+                    uri: item.avatar}}/>
               </Mask>
             </View>
             <Text style={styles.itemInfoName}>{item.name}</Text>

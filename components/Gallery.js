@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ImageBackground, FlatList, Dimensions, Image } from 'react-native';
 import ScalableImage from 'react-native-scalable-image';
-// import { md5 } from 'md5';
 import SmartImage from './SmartImage';
 import ScalableSmartImage from './ScalableSmartImage'
 
@@ -41,9 +40,7 @@ class Gallery extends React.Component {
   }
 
   renderItems() {
-    // console.log("dataLoaded = " + dataLoaded)
     if (this.state.data && this.state.data.length > 0) {
-      // console.log("data = " + data)
       return (
         <FlatList style={styles.list}
           data={this.state.data}

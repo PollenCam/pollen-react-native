@@ -12,14 +12,11 @@ const getLoading = (state) => state.ImageCache.loading;
 const fetch = function* ({ payload }) {
   const loading = yield select(getLoading);
   if (loading.includes(payload.uri)) {
-    console.log('loading, payload.uri = ' + payload.uri)
     return;
   }
   const output = `${folder}/${payload.filename}`;
   const localFile = yield FileSystem.getInfoAsync(output);
   if (localFile.exists) {
-    console.log('localFile.exists, localFile.uri = ' + localFile.uri + ' payload.uri = ' + payload.uri)
-
     yield put(ImageCache.actions.success({
       uri: payload.uri,
       local: localFile.uri,
@@ -27,7 +24,7 @@ const fetch = function* ({ payload }) {
     return;
   }
   yield put(ImageCache.actions.download(payload.uri));
-  const downloaded = yield FileSystem.downloadAsync(payload.uri, output);
+  const downloaded = yield FileSystem.downloadAsync(payload.uri, output)
   yield put(ImageCache.actions.success({
     uri: payload.uri,
     local: downloaded.uri,

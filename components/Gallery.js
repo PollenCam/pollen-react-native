@@ -1,12 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, ImageBackground, FlatList, Dimensions, Image } from 'react-native';
 import ScalableImage from 'react-native-scalable-image';
-import Mask from 'react-native-mask';
 // import { md5 } from 'md5';
 import SmartImage from './SmartImage';
+import ScalableSmartImage from './ScalableSmartImage'
 
 import {getGallery} from '../api/FetchGallery';
 
+const _avatarSize = 36;
 const _padding = 12;
 const _screenWidth = Dimensions.get('window').width - (_padding*2);
 
@@ -64,18 +65,21 @@ class Gallery extends React.Component {
             source={{uri: item.imageUrl}}>
           <View style={styles.itemInfo}>
             <View style={styles.itemInfoAvatar}>
-              <Mask shape={'circle'}>
-                <SmartImage style={styles.itemInfoAvatar}
-                  source={{
-                    filename:`${item.name} ${item.createdAt}`,
-                    uri: item.avatar}}/>
-              </Mask>
+            <ScalableSmartImage style={styles.itemInfoAvatar}
+            width={_avatarSize}
+              source={{
+                filename: item.avatarFilename,
+                uri: item.avatar}}
+                type={'avatar'}/>
             </View>
             <Text style={styles.itemInfoName}>{item.name}</Text>
           </View>
-          <ScalableImage style={styles.image}
+          <ScalableSmartImage style={styles.image}
             width={_screenWidth}
-            source={{uri: item.imageUrl}} />
+            source={{
+              filename: item.imageFilename,
+              uri: item.imageUrl}}
+              type={'image'}/>
         </View>
   );
 
@@ -131,8 +135,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   itemInfoAvatar: {
-    width: 36,
-    height: 36
+    width: _avatarSize,
+    height: _avatarSize,
+    borderRadius: _avatarSize/2,
   },
   itemInfoName: {
     paddingLeft: 8,

@@ -27,13 +27,15 @@ class SmartImage extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    console.log('shouldComponentUpdate, localUri= ' + this.props.localUri + ' nextProps.localUri = ' + nextProps.localUri)
     return this.props.localUri !== nextProps.localUri;
   }
 
   getSource() {
-    if (!this.props.localUri) return require('../images/ImagePreview.js');
-    return { uri: this.props.localUri };
+    if (!this.props.localUri) {
+      return require('../images/temppreview.png');
+    } else {
+      return { uri: this.props.localUri };
+    }
   }
 
   render() {
@@ -49,7 +51,6 @@ class SmartImage extends React.Component {
 export default connect(
   (state, props) => {
     const { loading, loaded } = state.ImageCache;
-    console.log(props.source.filename)
     return {
       loading: loading.includes(props.source.uri),
       localUri: loaded[props.source.uri],

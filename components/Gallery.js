@@ -7,6 +7,9 @@ import Ripple from 'react-native-material-ripple';
 
 import {getGallery} from '../api/FetchGallery';
 
+import ChevronIconDown from '../images/ChevronIconDown'
+import ChevronIconUp from '../images/ChevronIconUp'
+
 const _avatarSize = 36;
 const _padding = 12;
 const _screenWidth = Dimensions.get('window').width - (_padding*2);
@@ -16,16 +19,9 @@ const _buttonSize = 48;
 const _buttonContainerSize = 72;
 const _toolBarMenuWidth = 144;
 
-const _menuOpen = false;
-
 var md5 = require('md5');
 
 class Gallery extends React.Component {
-
-  state = {
-    translateY: new Animated.Value(0),
-    backgroundColor: new Animated.Value(0)
-  }
 
   constructor() {
     super();
@@ -37,6 +33,7 @@ class Gallery extends React.Component {
       toolbarMenuScale: new Animated.Value(0.01),
       radius: 0,
       diameter: 0,
+      menuOpen: false,
     };
 
     this.renderItems = this.renderItems.bind(this);
@@ -57,48 +54,51 @@ class Gallery extends React.Component {
     })
   }
 
-  toggleMenu() {
-    if (!_menuOpen) {
+  _toggleMenu() {
+    if (!this.state.menuOpen) {
       Animated.parallel([
         Animated.timing(this.state.translateY, {
           easing: Easing.out(Easing.ease),
-          duration: 200,
+          duration: 150,
           toValue: _toolbarHeight/2 - 1,
         }),
         Animated.timing(this.state.backgroundColor, {
-          duration: 200,
+          duration: 150,
           toValue: 1,
         }),
         Animated.timing(this.state.toolbarMenuScale, {
           toValue: 1,
-          duration: 200,
-          delay: 200,
+          duration: 150,
+          delay: 150,
           easing: Easing.bezier(0.0, 0.0, 0.2, 1),
         })
       ]).start();
 
-      _menuOpen = true;
+      this.setState({
+        menuOpen: true
+      }) ;
     } else {
       Animated.parallel([
         Animated.timing(this.state.translateY, {
           toValue: 0,
           easing: Easing.out(Easing.ease),
-          duration: 200,
-          delay: 200
+          duration: 150,
+          delay: 150
         }),
         Animated.timing(this.state.backgroundColor, {
           toValue: 0,
-          duration: 200,
-          delay: 200
+          duration: 150,
+          delay: 150
         }),
         Animated.timing(this.state.toolbarMenuScale, {
           toValue: 0.01,
-          duration: 200,
-          easing: Easing.bezier(0.0, 0.0, 0.2, 1),
+          duration: 150,
         })
       ]).start();
 
-      _menuOpen = false;
+      this.setState({
+        menuOpen: false
+      }) ;
     }
   }
 
@@ -144,6 +144,7 @@ class Gallery extends React.Component {
   );
 
   render() {
+    console.log('poop')
     const translateY = this.state;
     const backgroundColor = this.state.backgroundColor.interpolate({
       inputRange: [0, 1],
@@ -160,14 +161,25 @@ class Gallery extends React.Component {
         </View>
         <Animated.View style={[styles.toolbarMenuContainer, {transform: [{translateY: this.state.translateY}]}]}>
           <Animated.View style={[styles.toolbarMenu, {transform: [{scale: this.state.toolbarMenuScale}]}]} >
-            <Animated.View style={[styles.toolbarMenuBackground, {backgroundColor}]} />
+            <Animated.View style={[styles.toolbarMenuContent, {backgroundColor}]} >
+              <Animated.View style={[styles.toolbarMenuContentContainer]} >
+                <Text>Text</Text>
+              </Animated.View>
+            </Animated.View>
           </Animated.View>
           <Animated.View style={[styles.toolbarButtonContainer]}>
             <Ripple style={[styles.toolbarButton, {backgroundColor}]}
               rippleContainerBorderRadius={_buttonSize/2}
               rippleOpacity={0}
-              onPress={ () => { this.toggleMenu() } }>
-              <Text>+</Text>
+              onPress={ () => {
+                this._toggleMenu()}
+              }>
+              <View style={styles.toolbarButtonChevronContainer}>
+                <ChevronIconUp invisible={!this.state.menuOpen}/>
+              </View>
+              <View style={styles.toolbarButtonChevronContainer}>
+                <ChevronIconDown invisible={this.state.menuOpen}/>
+              </View>
             </Ripple>
           </Animated.View>
         </Animated.View>
@@ -259,13 +271,21 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'flex-end',
   },
-  toolbarMenuBackground: {
+  toolbarMenuContent: {
+    position: 'absolute',
     width: _toolBarMenuWidth,
     height: _buttonSize,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 0,
     borderBottomLeftRadius: 8,
     borderBottomRightRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  toolbarMenuContentContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   toolbarButtonContainer: {
     position: 'absolute',
@@ -282,9 +302,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: _buttonSize/2,
   },
-  toolbarButtonText: {
-    textAlign: 'center',
-    fontSize: 36,
+  toolbarButtonChevronContainer: {
+    position: 'absolute',
   },
 });
 

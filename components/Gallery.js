@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ImageBackground, FlatList, Dimensions, Image, Animated, Easing, Platform } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, FlatList, Dimensions, Image, Animated, Easing, Platform, TouchableOpacity } from 'react-native';
 import ScalableImage from 'react-native-scalable-image';
 import SmartImage from './SmartImage';
 import ScalableSmartImage from './ScalableSmartImage';
@@ -9,15 +9,20 @@ import {getGallery} from '../api/FetchGallery';
 
 import ChevronIconDown from '../images/ChevronIconDown'
 import ChevronIconUp from '../images/ChevronIconUp'
+import GalleryListIcon from '../images/GalleryListIcon'
+import GalleryGridIcon from '../images/GalleryGridIcon'
+import DownloadAllIcon from '../images/DownloadAllIcon'
+
+import AnimatedListItem from './AnimatedListItem'
 
 const _avatarSize = 36;
 const _padding = 12;
-const _screenWidth = Dimensions.get('window').width - (_padding*2);
+const _screenWidth = Dimensions.get('window').width;
 
 const _toolbarHeight = 72;
 const _buttonSize = 48;
 const _buttonContainerSize = 72;
-const _toolBarMenuWidth = 144;
+const _toolBarMenuWidth = _buttonSize*4;
 
 var md5 = require('md5');
 
@@ -34,6 +39,7 @@ class Gallery extends React.Component {
       radius: 0,
       diameter: 0,
       menuOpen: false,
+      gridMode: false,
     };
 
     this.renderItems = this.renderItems.bind(this);
@@ -102,6 +108,22 @@ class Gallery extends React.Component {
     }
   }
 
+  _editCode() {}
+
+  _toggleGrid() {
+    if (!this.state.gridMode) {
+      this.setState({
+        gridMode: true
+      })
+    } else {
+      this.setState({
+        gridMode: false
+      })
+    }
+  }
+
+  _downloadAll() {}
+
   renderItems() {
     if (this.state.data && this.state.data.length > 0) {
       return (
@@ -120,9 +142,10 @@ class Gallery extends React.Component {
 
   _keyExtractor = (item, index) => '' + index;
 
-  _renderItem = ({item}) => (
-        <View style={styles.item}
-            source={{uri: item.imageUrl}}>
+  _renderItem = ({item, index}) => (
+        <AnimatedListItem style={styles.item}
+            source={{uri: item.imageUrl}}
+            index={index}>
           <View style={styles.itemInfo}>
             <View style={styles.itemInfoAvatar}>
             <ScalableSmartImage style={styles.itemInfoAvatar}
@@ -135,12 +158,12 @@ class Gallery extends React.Component {
             <Text style={styles.itemInfoName}>{item.name}</Text>
           </View>
           <ScalableSmartImage style={styles.image}
-            width={_screenWidth}
+            width={_screenWidth - _padding*2}
             source={{
               filename: item.imageFilename,
               uri: item.imageUrl}}
               type={'image'}/>
-        </View>
+        </AnimatedListItem>
   );
 
   render() {
@@ -163,7 +186,32 @@ class Gallery extends React.Component {
           <Animated.View style={[styles.toolbarMenu, {transform: [{scale: this.state.toolbarMenuScale}]}]} >
             <Animated.View style={[styles.toolbarMenuContent, {backgroundColor}]} >
               <Animated.View style={[styles.toolbarMenuContentContainer]} >
-                <Text>Text</Text>
+                <TouchableOpacity style={styles.toolbarButton}
+                  onPress={ () => {
+                    this._editCode()}
+                  }>
+                  <Text style={styles.toolbarButtonIconContainer}>C0D3</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.toolbarButton}
+                  onPress={ () => {
+                    this._toggleGrid()}
+                  }>
+                  <View style={styles.toolbarButtonIconContainer}>
+                    <GalleryListIcon invisible={!this.state.gridMode}/>
+                  </View>
+                  <View style={styles.toolbarButtonIconContainer}>
+                    <GalleryGridIcon invisible={this.state.gridMode}/>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.toolbarButton}
+                  onPress={ () => {
+                    this._downloadAll()}
+                  }>
+                  <View style={styles.toolbarButtonIconContainer}>
+                    <DownloadAllIcon invisible={this.state.downloadAllAvailable}/>
+                  </View>
+                </TouchableOpacity>
+                <View style={styles.toolbarMenuSpacer} />
               </Animated.View>
             </Animated.View>
           </Animated.View>
@@ -174,10 +222,10 @@ class Gallery extends React.Component {
               onPress={ () => {
                 this._toggleMenu()}
               }>
-              <View style={styles.toolbarButtonChevronContainer}>
+              <View style={styles.toolbarButtonIconContainer}>
                 <ChevronIconUp invisible={!this.state.menuOpen}/>
               </View>
-              <View style={styles.toolbarButtonChevronContainer}>
+              <View style={styles.toolbarButtonIconContainer}>
                 <ChevronIconDown invisible={this.state.menuOpen}/>
               </View>
             </Ripple>
@@ -270,8 +318,10 @@ const styles = StyleSheet.create({
     right: -_toolBarMenuWidth + _padding,
     alignItems: 'flex-start',
     justifyContent: 'flex-end',
+        zIndex: 1,
   },
   toolbarMenuContent: {
+    flex: 1,
     position: 'absolute',
     width: _toolBarMenuWidth,
     height: _buttonSize,
@@ -280,12 +330,16 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 8,
     borderBottomRightRadius: 8,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-around',
+    backgroundColor: 'yellow'
   },
   toolbarMenuContentContainer: {
     flex: 1,
+    width: '100%',
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-around',
+    backgroundColor: 'transparent'
   },
   toolbarButtonContainer: {
     position: 'absolute',
@@ -295,15 +349,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   toolbarButton: {
-    position: 'absolute',
     width: _buttonSize,
     height: _buttonSize,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: _buttonSize/2,
+    zIndex: 1,
+
   },
-  toolbarButtonChevronContainer: {
+  toolbarButtonIconContainer: {
     position: 'absolute',
+  },
+  toolbarMenuSpacer: {
+    width: _buttonSize*0.66,
+    backgroundColor: 'transparent',
   },
 });
 

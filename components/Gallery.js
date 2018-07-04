@@ -126,13 +126,48 @@ class Gallery extends React.Component {
 
   renderItems() {
     if (this.state.data && this.state.data.length > 0) {
-      return (
-        <FlatList style={styles.list}
-          data={this.state.data}
-          renderItem={this._renderItem}
-          keyExtractor={this._keyExtractor}
-        />
-      );
+      if (!this.state.gridMode) {
+        return (
+          <FlatList style={styles.list}
+            data={this.state.data}
+            renderItem={this._renderListItem}
+            keyExtractor={this._keyExtractor}
+          />
+        );
+      } else {
+        data1 = [];
+        data2 = [];
+        for (var i = 0; i < this.state.data.length; i++) {
+          if ((i+2)%2==0) {
+            console.log('data1.push');
+
+            data1.push(this.state.data[i]);
+          }
+          else {
+            console.log('data2.push');
+
+            data2.push(this.state.data[i]);
+          }
+        }
+        console.log('this.state.data = ' + this.state.data);
+        console.log('data1 = ' + data1);
+        console.log('data2 = ' + data2);
+
+        return (
+          <View style={styles.gridContainer}>
+            <FlatList style={styles.gridRight}
+              data={data1}
+              renderItem={this._renderGridItem}
+              keyExtractor={this._keyExtractor}
+            />
+            <FlatList style={styles.gridLeft}
+              data={data2}
+              renderItem={this._renderGridItem}
+              keyExtractor={this._keyExtractor}
+            />
+          </View>
+        );
+      }
     } else {
       return (
         <Text>Error Data not loaded</Text>
@@ -142,7 +177,7 @@ class Gallery extends React.Component {
 
   _keyExtractor = (item, index) => '' + index;
 
-  _renderItem = ({item, index}) => (
+  _renderListItem = ({item, index}) => (
         <AnimatedListItem style={styles.item}
             source={{uri: item.imageUrl}}
             index={index}>
@@ -166,8 +201,31 @@ class Gallery extends React.Component {
         </AnimatedListItem>
   );
 
+  _renderGridItem = ({item, index}) => (
+    <AnimatedListItem style={styles.item}
+        source={{uri: item.imageUrl}}
+        index={index}>
+      <View style={styles.itemInfo}>
+        <View style={styles.itemInfoAvatar}>
+        <ScalableSmartImage style={styles.itemInfoAvatar}
+        width={_avatarSize}
+          source={{
+            filename: item.avatarFilename,
+            uri: item.avatar}}
+            type={'avatar'}/>
+        </View>
+        <Text style={styles.itemInfoName}>{item.name}</Text>
+      </View>
+      <ScalableSmartImage style={styles.image}
+        width={_screenWidth/2 - _padding*2}
+        source={{
+          filename: item.imageFilename,
+          uri: item.imageUrl}}
+          type={'image'}/>
+    </AnimatedListItem>
+  );
+
   render() {
-    console.log('poop')
     const translateY = this.state;
     const backgroundColor = this.state.backgroundColor.interpolate({
       inputRange: [0, 1],
@@ -216,19 +274,19 @@ class Gallery extends React.Component {
             </Animated.View>
           </Animated.View>
           <Animated.View style={[styles.toolbarButtonContainer]}>
-            <Ripple style={[styles.toolbarButton, {backgroundColor}]}
-              rippleContainerBorderRadius={_buttonSize/2}
-              rippleOpacity={0}
-              onPress={ () => {
-                this._toggleMenu()}
-              }>
-              <View style={styles.toolbarButtonIconContainer}>
-                <ChevronIconUp invisible={!this.state.menuOpen}/>
-              </View>
-              <View style={styles.toolbarButtonIconContainer}>
-                <ChevronIconDown invisible={this.state.menuOpen}/>
-              </View>
-            </Ripple>
+            <Animated.View style={[styles.toolbarButton,{backgroundColor}]} >
+              <TouchableOpacity style={[styles.toolbarButton]}
+                onPress={ () => {
+                  this._toggleMenu()}
+                }>
+                <View style={styles.toolbarButtonIconContainer}>
+                  <ChevronIconUp invisible={!this.state.menuOpen}/>
+                </View>
+                <View style={styles.toolbarButtonIconContainer}>
+                  <ChevronIconDown invisible={this.state.menuOpen}/>
+                </View>
+              </TouchableOpacity>
+            </Animated.View>
           </Animated.View>
         </Animated.View>
         { this.renderItems() }
@@ -247,6 +305,16 @@ const styles = StyleSheet.create({
   },
   list: {
     flex: 1,
+  },
+  gridContainer: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  gridRight: {
+
+  },
+  gridLeft: {
+
   },
   item: {
     flex: 1,

@@ -72,11 +72,11 @@ class Gallery extends React.Component {
           delay: 150,
           easing: Easing.bezier(0.0, 0.0, 0.2, 1),
         })
-      ]).start();
-
-      this.setState({
-        menuOpen: true
-      }) ;
+      ]).start(() => {
+        this.setState({
+          menuOpen: true
+        });
+      });
     } else {
       Animated.parallel([
         Animated.timing(this.state.translateY, {
@@ -94,11 +94,11 @@ class Gallery extends React.Component {
           toValue: 0.01,
           duration: 150,
         })
-      ]).start();
-
-      this.setState({
-        menuOpen: false
-      }) ;
+      ]).start(() => {
+        this.setState({
+          menuOpen: false
+        });
+      });
     }
   }
 

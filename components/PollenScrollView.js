@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import Camera from './Camera';
 import Dashboard from './Dashboard';
 import Profile from './Profile';
-import Stream from './Stream';
+import Gallery from './Gallery';
 
 const window = Dimensions.get('window');
 
@@ -33,7 +33,7 @@ class PollenScrollView extends Component {
     super(props);
     this._scrollView = null;
 
-    this._initialIndex = 1;
+    this._initialIndex = 2;
 
     this.state = {
       lastPinchDistance: -1,
@@ -78,7 +78,7 @@ class PollenScrollView extends Component {
             pinchIn={(pinchIn) => { this.childPinchIn = pinchIn; }}/>
           </View>
           <View key={2} style={styles.item}>
-            <Stream />
+            <Gallery />
           </View>
         </ScrollView>
       </View>
@@ -133,6 +133,10 @@ class PollenScrollView extends Component {
           touch2.locationY
         );
       }
+      {/* this is a hack to display an error, from which you can force reload because hot reload sucks :( */}
+if (gestureState.numberActiveTouches === 3) {
+  HACK_TO_ALLOW_FORCE_RELOAD_HAHAHAHAHA_____FOR_DEBUG_ONLY
+}
     },
     onPanResponderRelease: () => {
       this.setState({ scrollEnabled: true });

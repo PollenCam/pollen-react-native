@@ -5,7 +5,7 @@ import { put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import * as ImageCache from '../reducers/ImageCache';
 import { constants as status } from '../reducers/Status';
 
-const folder = `${FileSystem.cacheDirectory}pollen-photos`;
+const folder = `${FileSystem.cacheDirectory}pollen`;
 
 const getLoading = (state) => state.ImageCache.loading;
 

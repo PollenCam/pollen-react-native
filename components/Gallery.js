@@ -9,8 +9,6 @@ import {getGallery} from '../api/FetchGallery';
 
 import ChevronIconDown from '../images/ChevronIconDown'
 import ChevronIconUp from '../images/ChevronIconUp'
-import GalleryListIcon from '../images/GalleryListIcon'
-import GalleryGridIcon from '../images/GalleryGridIcon'
 import DownloadAllIcon from '../images/DownloadAllIcon'
 
 import AnimatedListItem from './AnimatedListItem'
@@ -22,7 +20,7 @@ const _screenWidth = Dimensions.get('window').width;
 const _toolbarHeight = 72;
 const _buttonSize = 48;
 const _buttonContainerSize = 72;
-const _toolBarMenuWidth = _buttonSize*4;
+const _toolBarMenuWidth = _buttonSize*3 + _padding;
 
 var md5 = require('md5');
 
@@ -248,18 +246,7 @@ class Gallery extends React.Component {
                   onPress={ () => {
                     this._editCode()}
                   }>
-                  <Text style={styles.toolbarButtonIconContainer}>C0D3</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.toolbarButton}
-                  onPress={ () => {
-                    this._toggleGrid()}
-                  }>
-                  <View style={styles.toolbarButtonIconContainer}>
-                    <GalleryListIcon invisible={!this.state.gridMode}/>
-                  </View>
-                  <View style={styles.toolbarButtonIconContainer}>
-                    <GalleryGridIcon invisible={this.state.gridMode}/>
-                  </View>
+                  <Text style={styles.toolbarButtonText}>C0D3</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.toolbarButton}
                   onPress={ () => {
@@ -386,20 +373,20 @@ const styles = StyleSheet.create({
     right: -_toolBarMenuWidth + _padding,
     alignItems: 'flex-start',
     justifyContent: 'flex-end',
-        zIndex: 1,
+    zIndex: 1,
   },
   toolbarMenuContent: {
     flex: 1,
     position: 'absolute',
     width: _toolBarMenuWidth,
     height: _buttonSize,
+    paddingLeft: _padding,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 0,
     borderBottomLeftRadius: 8,
     borderBottomRightRadius: 8,
     alignItems: 'center',
     justifyContent: 'space-around',
-    backgroundColor: 'yellow'
   },
   toolbarMenuContentContainer: {
     flex: 1,
@@ -423,13 +410,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: _buttonSize/2,
     zIndex: 1,
-
   },
   toolbarButtonIconContainer: {
     position: 'absolute',
   },
+  toolbarButtonText: {
+    textAlign: 'center',
+  },
   toolbarMenuSpacer: {
-    width: _buttonSize*0.66,
+    width: _buttonSize - _padding,
     backgroundColor: 'transparent',
   },
 });

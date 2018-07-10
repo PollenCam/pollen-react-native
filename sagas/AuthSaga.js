@@ -42,7 +42,7 @@ function* authenticationFlow() {
   const storedToken = yield call(auth.getStoredToken);
 
   while (true) {
-    const authData;
+    let authData;
 
     if (!storedToken) {
       const winner = yield race({
@@ -78,7 +78,6 @@ const init = function* () {
 };
 
 const initSaga = function* () {
-  yield takeLatest(status.start, init);
 };
 
 export default [

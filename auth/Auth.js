@@ -1,3 +1,5 @@
+import { AsyncStorage } from 'react-native';
+
 const TOKEN_KEY = "auth-token";
 
 const auth = {
@@ -19,9 +21,13 @@ const auth = {
 
   onChange () {},
 
+  loggedIn() {
+    return !!this.getStoredToken();
+  },
+
   storeToken(token) {
     AsyncStorage.setItem(TOKEN_KEY, JSON.stringify(token));
-  }
+  },
 
   getStoredToken() {
     AsyncStorage.getItem(TOKEN_KEY, (err, result) => {
@@ -36,4 +42,4 @@ const auth = {
 
 }
 
-export default auth
+export default auth;

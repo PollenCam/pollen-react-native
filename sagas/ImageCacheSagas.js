@@ -2,12 +2,12 @@ import { FileSystem } from 'expo';
 import { put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 // import md5 from 'js-md5';
 
-import * as ImageCache from '../reducers/ImageCache';
+import * as ImageCacheReducer from '../reducers/ImageCacheReducer';
 import { constants as status } from '../reducers/Status';
 
 const folder = `${FileSystem.cacheDirectory}pollen-photos`;
 
-const getLoading = (state) => state.ImageCache.loading;
+const getLoading = (state) => state.ImageCacheReducer.loading;
 
 const fetch = function* ({ payload }) {
   const loading = yield select(getLoading);
@@ -17,22 +17,22 @@ const fetch = function* ({ payload }) {
   const output = `${folder}/${payload.filename}`;
   const localFile = yield FileSystem.getInfoAsync(output);
   if (localFile.exists) {
-    yield put(ImageCache.actions.success({
+    yield put(ImageCacheReducer.actions.success({
       uri: payload.uri,
       local: localFile.uri,
     }));
     return;
   }
-  yield put(ImageCache.actions.download(payload.uri));
+  yield put(ImageCacheReducer.actions.download(payload.uri));
   const downloaded = yield FileSystem.downloadAsync(payload.uri, output)
-  yield put(ImageCache.actions.success({
+  yield put(ImageCacheReducer.actions.success({
     uri: payload.uri,
     local: downloaded.uri,
   }));
 };
 
 const fetchSaga = function* () {
-  yield takeEvery(ImageCache.constants.fetch, fetch);
+  yield takeEvery(ImageCacheReducer.constants.fetch, fetch);
 };
 
 const init = function* () {

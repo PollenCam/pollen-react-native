@@ -1,5 +1,5 @@
 import { all, fork } from 'redux-saga/effects';
-import ImageCacheSagas from './ImageCache';
+import ImageCacheSagas from './ImageCacheSagas';
 import AuthSagas from './AuthSaga'
 
 const root = function* () {

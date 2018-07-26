@@ -196,7 +196,7 @@ export default class CameraScreen extends React.Component {
 
   render() {
     const cameraScreenContent = this.state.permissionsGranted
-      ? this.renderCamera()
+      ? this.renderNoPermissions()
       : this.renderNoPermissions()
     return <View style={styles.container}>{cameraScreenContent}</View>
   }

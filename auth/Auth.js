@@ -3,20 +3,64 @@ import { AsyncStorage } from 'react-native';
 const TOKEN_KEY = "auth-token";
 
 const auth = {
-  logIn (username, password) {
-    return request.post('/login', {username, password})
-      .then(response => {
-        return response.token;
-      })
+  logIn (email, password) {
+    fetch('/api/rest/user_accounts/sign_in', {
+      method: 'POST',
+      body: JSON.stringify(
+        'user_account': {
+          'email': email,
+          'password': password
+        }
+      ),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    .then( (response) => {
+      switch (response.status) {
+        case 200:
+          const resData = response.json();
+          storeToken(resData.auth_token);
+          return resData;
+          break;
+        default:
+          return response.json();
+      }
+    }).catch( (error) => {
+      console.error('Failed to log in, unable to get client token, error: ' + error);
+    })
   },
 
   logOut () {
     return request.post('/logout');
   },
 
-  register (username, password) {
-    return request.post('/register', {username, password})
-      .then(() => auth.login(username, password)); // or return a token
+  register (email, password) {
+    fetch('/api/rest/user_accounts', {
+      method: 'POST',
+      body: JSON.stringify(
+        'user_account': {
+          'email': email,
+          'password': password
+        }
+      ),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    .then( (response) => {
+      switch (response.status) {
+        case 201:
+          const resData = response.json();
+          storeToken(resData.auth_token);
+          return resData;
+          break;
+        default:
+          return response.json();
+      }
+    }).catch( (error) => {
+      console.error('Failed to register, unable to get client token, error: ' + error);
+    })
   },
 
   onChange () {},
@@ -26,7 +70,7 @@ const auth = {
   },
 
   storeToken(token) {
-    AsyncStorage.setItem(TOKEN_KEY, JSON.stringify(token));
+    AsyncStorage.setItem(TOKEN_KEY, token);
   },
 
   getStoredToken() {

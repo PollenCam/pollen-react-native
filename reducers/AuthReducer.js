@@ -20,7 +20,7 @@ export const actions = Object
 
 const defaultState = {
   formState: {
-    username: '',
+    email: '',
     password: ''
   },
   error: '',
@@ -63,7 +63,7 @@ export default handleActions({
     return {
       ...state,
       credentials: [
-        username: action.username,
+        email: action.email,
         password: action.password,
       ],
     };
@@ -72,7 +72,7 @@ export default handleActions({
     return {
       ...state,
       credentials: [
-        username: action.username,
+        email: action.email,
         password: action.password,
       ],
     };

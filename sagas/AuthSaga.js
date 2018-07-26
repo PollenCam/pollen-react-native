@@ -1,5 +1,8 @@
+import { put, call, take, takeLatest, fork, race } from 'redux-saga/effects';
+
 import * as AuthReducer from '../reducers/AuthReducer';
-import { put, call, take, takeLatest, fork } from 'redux-saga/effects';
+import auth from '../auth/Auth';
+import { constants as status } from '../reducers/Status';
 
 function* authorize(storedToken, authData) {
   if (storedToken) {
@@ -8,15 +11,17 @@ function* authorize(storedToken, authData) {
   }
   yield put({type: AuthReducer.constants.SENDING_REQUEST, currentlySending: true});
   try {
-    let token;
+    let response;
     if (authData.isRegistering) {
-      token = yield call(auth.register, authData.username, authData.password);
+      response = yield call(auth.register, authData.email, authData.password);
     } else {
-      token = yield call(auth.logIn, authData.username, authData.password);
+      response = yield call(auth.logIn, authData.email, authData.password);
     }
-    yield call(auth.storeToken, token);
+    if (response.errors) {
+      throw Error(response.errors);
+    }
     yield put({type: AuthReducer.constants.SET_AUTH, newAuthState: true});
-    return token;
+    return response;
   } catch (e) {
     yield put({type: AuthReducer.constants.REQUEST_ERROR, error: e});
     return null;
@@ -40,18 +45,22 @@ function* logOut() {
 
 function* authenticationFlow() {
   const storedToken = yield call(auth.getStoredToken);
+  console.log('authenticationFlow')
 
   while (true) {
+    console.log('authenticationFlow loop')
+
     let authData;
 
     if (!storedToken) {
+      console.log('authenticationFlow no stored token')
       const winner = yield race({
-          login: take(AuthReducer.constants.LOG_IN_REQUEST),
-          register: take(AuthReducer.constants.REGISTER_REQUEST)
+        login: take(AuthReducer.constants.LOG_IN_REQUEST),
+        register: take(AuthReducer.constants.REGISTER_REQUEST)
       });
-      const {username, password} = winner.credentials;
+      const {email, password} = winner.credentials;
       authData = {
-        username: username,
+        email: email,
         password: password,
         isRegistering: winner = register
       }
@@ -64,8 +73,17 @@ function* authenticationFlow() {
   }
 }
 
-function* logOutFlow() {
+function* logInFlow() {
+  console.log('logInFlow')
   while (true) {
+    yield
+  }
+}
+
+function* logOutFlow() {
+  console.log('logOutFlow')
+  while (true) {
+    console.log('logOutFlow loop')
     yield take(AuthReducer.constants.LOG_OUT_REQUEST);
     yield put({type: SET_AUTH, newAuthState: false});
     yield call(logOut);
@@ -73,11 +91,16 @@ function* logOutFlow() {
 }
 
 const init = function* () {
+  console.log('init')
+
   yield fork(authenticationFlow);
   yield fork(logOutFlow);
 };
 
 const initSaga = function* () {
+  console.log('initSaga')
+
+  yield takeLatest(status.start, init);
 };
 
 export default [

@@ -1,1 +1,1 @@
-export ImageCache from './ImageCache';
+export ImageCacheReducer from './ImageCacheReducer';

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Image } from 'react-native';
-import { actions as ImageCacheAction } from '../reducers/ImageCache';
+import { actions as ImageCacheAction } from '../reducers/ImageCacheReducer';
 import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
 
 class ScalableSmartImage extends React.Component {
@@ -129,7 +129,7 @@ class ScalableSmartImage extends React.Component {
 
 export default connect(
   (state, props) => {
-    const { loading, loaded } = state.ImageCache;
+    const { loading, loaded } = state.ImageCacheReducer;
     return {
       loading: loading.includes(props.source.uri),
       localUri: loaded[props.source.uri],

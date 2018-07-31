@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Image } from 'react-native';
-import { actions as ImageCacheAction } from '../reducers/ImageCache';
+import { actions as ImageCacheAction } from '../reducers/ImageCacheReducer';
 
 class SmartImage extends React.Component {
   static propTypes = {

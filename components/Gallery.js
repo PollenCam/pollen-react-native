@@ -137,19 +137,12 @@ class Gallery extends React.Component {
         data2 = [];
         for (var i = 0; i < this.state.data.length; i++) {
           if ((i+2)%2==0) {
-            console.log('data1.push');
-
             data1.push(this.state.data[i]);
           }
           else {
-            console.log('data2.push');
-
             data2.push(this.state.data[i]);
           }
         }
-        console.log('this.state.data = ' + this.state.data);
-        console.log('data1 = ' + data1);
-        console.log('data2 = ' + data2);
 
         return (
           <View style={styles.gridContainer}>
@@ -176,52 +169,52 @@ class Gallery extends React.Component {
   _keyExtractor = (item, index) => '' + index;
 
   _renderListItem = ({item, index}) => (
-        <AnimatedListItem style={styles.item}
-            source={{uri: item.imageUrl}}
-            index={index}>
-          <View style={styles.itemInfo}>
-            <View style={styles.itemInfoAvatar}>
-            <ScalableSmartImage style={styles.itemInfoAvatar}
+    <AnimatedListItem style={styles.item}
+      source={{uri: item.imageUrl}}
+      index={index}>
+      <View style={styles.itemInfo}>
+        <View style={styles.itemInfoAvatar}>
+          <ScalableSmartImage style={styles.itemInfoAvatar}
             width={_avatarSize}
-              source={{
-                filename: item.avatarFilename,
-                uri: item.avatar}}
-                type={'avatar'}/>
-            </View>
-            <Text style={styles.itemInfoName}>{item.name}</Text>
-          </View>
-          <ScalableSmartImage style={styles.image}
-            width={_screenWidth - _padding*2}
             source={{
-              filename: item.imageFilename,
-              uri: item.imageUrl}}
-              type={'image'}/>
+              filename: item.avatarFilename,
+              uri: item.avatar}}
+              type={'avatar'}/>
+          </View>
+          <Text style={styles.itemInfoName}>{item.name}</Text>
+        </View>
+        <ScalableSmartImage style={styles.image}
+          width={_screenWidth - _padding*2}
+          source={{
+            filename: item.imageFilename,
+            uri: item.imageUrl}}
+            type={'image'}/>
         </AnimatedListItem>
-  );
+      );
 
   _renderGridItem = ({item, index}) => (
     <AnimatedListItem style={styles.item}
-        source={{uri: item.imageUrl}}
-        index={index}>
+      source={{uri: item.imageUrl}}
+      index={index}>
       <View style={styles.itemInfo}>
         <View style={styles.itemInfoAvatar}>
-        <ScalableSmartImage style={styles.itemInfoAvatar}
-        width={_avatarSize}
-          source={{
-            filename: item.avatarFilename,
-            uri: item.avatar}}
-            type={'avatar'}/>
+          <ScalableSmartImage style={styles.itemInfoAvatar}
+            width={_avatarSize}
+            source={{
+              filename: item.avatarFilename,
+              uri: item.avatar}}
+              type={'avatar'}/>
+          </View>
+          <Text style={styles.itemInfoName}>{item.name}</Text>
         </View>
-        <Text style={styles.itemInfoName}>{item.name}</Text>
-      </View>
-      <ScalableSmartImage style={styles.image}
-        width={_screenWidth/2 - _padding*2}
-        source={{
-          filename: item.imageFilename,
-          uri: item.imageUrl}}
-          type={'image'}/>
-    </AnimatedListItem>
-  );
+        <ScalableSmartImage style={styles.image}
+          width={_screenWidth/2 - _padding*2}
+          source={{
+            filename: item.imageFilename,
+            uri: item.imageUrl}}
+            type={'image'}/>
+        </AnimatedListItem>
+      );
 
   render() {
     const translateY = this.state;
